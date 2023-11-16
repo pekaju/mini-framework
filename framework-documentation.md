@@ -116,4 +116,8 @@ Enjoy using the Mini-Framework for your web development projects.
 
 ## TodoMVC
 
-For simplicity, use live-server plugin in vscode to run the TodoMVC project. Right click on index.html and select `open with live server`.
+TodoMVC is a sample todo-list web page, which is used to compare different frameworks. You need npm to run this page on a local machine, and it can be done  by moving to backend directory
+```
+cd todoMVC/backend
+```
+and then running ```npm install```
