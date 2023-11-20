@@ -15,7 +15,6 @@ This documentation provides an overview of the features and usage of the Mini-Fr
 The `StateManager` class is used for managing the application's state. It provides the following methods:
 
 - `setState(newState)`: Sets a new state and notifies subscribers.
-- `setStateNosub(newState)`: Sets a new state without notifying subscribers.
 - `getState()`: Returns the current state.
 - `subscribe(callback)`: Subscribes a function to state changes.
 - `unsubscribe(callback)`: Unsubscribes a function from state changes.
@@ -116,8 +115,10 @@ Enjoy using the Mini-Framework for your web development projects.
 
 ## TodoMVC
 
-TodoMVC is a sample todo-list web page, which is used to compare different frameworks. You need npm to run this page on a local machine, and it can be done  by moving to backend directory
+TodoMVC is a sample todo-list web page, which is used to compare different frameworks. You need npm to run this page on a local machine, and it can be done by moving to backend directory:
 ```
 cd todoMVC/backend
 ```
-and then running ```npm install```
+and running ```npm install``` to install the needed node libraries.
+To execute the script run ```node server.js```
+

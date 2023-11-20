@@ -133,7 +133,7 @@ export function info() {
   MF.setAttributes(createdByLink, {
     href: "https://01.kood.tech/git/pkaju/mini-framework.git",
   });
-  createdByLink.textContent = "pekaju/kodras";
+  createdByLink.textContent = "pekaju";
   MF.append(paragraph2, createdByLink);
   const paragraph3 = MF.create("p");
   paragraph3.textContent = "Part of ";

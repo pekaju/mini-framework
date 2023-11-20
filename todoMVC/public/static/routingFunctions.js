@@ -22,7 +22,6 @@ function allList(sm = null, element) {
 }
 
 function completedList(sm = null, element) {
-  console.log("completedlist: ", element)
     const parent = element.parentNode;
     const siblingListItems = parent.parentNode.querySelectorAll("li");
   

@@ -15,11 +15,10 @@ function addEnterKeyListener(element, sm, callback) {
     if (event.key === "Enter") {
       event.preventDefault();
       const inputValue = element.value.trim();
-      callback(inputValue, sm);
+      callback(sm, inputValue);
       element.value = "";
     }
   });
 }
 
-// Export the custom event handling functions
 export { addEnterKeyListener, addClickListener, addHoverListener };

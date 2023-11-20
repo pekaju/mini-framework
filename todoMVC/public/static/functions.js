@@ -1,27 +1,23 @@
 import { sm } from "./main.js";
 import MF from "../../framework/dom.js";
-import { addClickListener } from "../../framework/events.js";
 
 export function destroyFn(sm, element) {
-    const listItem = element.closest('li');
-    if (listItem) {
-      const ulElement = listItem.parentNode;
-  
-      const allListItems = ulElement.querySelectorAll('li');
-  
-      const index = Array.from(allListItems).indexOf(listItem);
-  
-      const states = sm.getState();
-  
-      if (index >= 0 && index < states.length) {
-        // Remove the state element at the specified index
-        states.splice(index, 1);
-  
-        // Set the state to a new one without the removed element
-        sm.setState(states);
+  const listItem = element.closest("li");
+  const id = listItem.id;
+  fetch(`http://localhost:3000/tasks/${id}`, {
+    method: "DELETE",
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.success) {
+          sm.setState(data.tasks)
+      } else {r
+        console.erro("Failed to delete task");
       }
-    }
-  }
+    })
+    .catch((error) => console.error("Error:", error));
+  
+}
 
 export function updateCount() {
   const items = sm.getState();
@@ -35,54 +31,74 @@ export function updateCount() {
   strong.textContent = items.length;
 }
 
-export function handleClearCompletedClick(sm, element) {
-    const states = sm.getState();
-    const newStates = states.filter(state => !state.completed);
-    
-    sm.setState(newStates);
+export async function handleClearCompletedClick(sm, element) {
+  const states = sm.getState();
+  const newStates = states.filter((state) => !state.completed);
+  await fetch("http://localhost:3000/clearCompleted");
+  sm.setState(newStates);
 }
 
 export function handleLiHover(sm, element) {
-    const destroyElement = element.querySelector('.destroy');
-
-    // Check if the destroyElement exists
-    if (destroyElement) {
-        // Change the classname to still be "destroy"
-        destroyElement.className = 'destroy';
-    }
-}
-
-
-export function handleSingleClick(sm, element) {
-  const states = sm.getState();
-  sm.triggerCustomEvent("markSomeCompleted", { states });
-}
-
-export function getCorrectCheckboxes() {
-  const inputs = document.getElementsByTagName("input");
-  const checkboxes = Array.from(inputs).filter(
-    (item) => item.type === "checkbox"
-  );
-  const correctCheckboxes = Array.from(checkboxes).filter(
-    (item) => item.class !== "toggle-all"
-  );
-  correctCheckboxes.forEach((cb) =>
-    addClickListener(cb, sm, handleSingleClick)
-  );
-}
-
-export function handleArrowClick(sm, element) {
-  const states = sm.getState();
-  if (states.every((state) => state.completed)) {
-    states.forEach((state) => {
-      state.completed = false;
-    });
-  } else {
-    states.forEach((state) => {
-      state.completed = true;
-    });
+  const destroyElement = element.querySelector(".destroy");
+  if (destroyElement) {
+    destroyElement.className = "destroy";
   }
-  sm.triggerCustomEvent("markAllCompleted", { states });
+}
+
+export async function handleSingleClick(sm, checkbox) {
+  const id = checkbox.closest("li").id;
+  if (id) {
+    const response = await fetch("http://localhost:3000/checkSingleBox", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id: id }),
+    });
+    const json = await response.json();
+    sm.setState(json.tasks);
+  }
+}
+
+export async function handleArrowClick(sm, element) {
+  let states = sm.getState();
+  let response;
+  if (states.every((state) => state.completed)) {
+    states = states.map((state) => ({ ...state, completed: false }));
+    response = await fetch("http://localhost:3000/markAllNotCompleted");
+  } else {
+    states = states.map((state) => ({ ...state, completed: true }));
+    response = await fetch("http://localhost:3000/markAllCompleted");
+  }
+  const json = await response.json();
+  if (!json.success) {
+    console.log("error marking all as complete in backend");
+  }
+  sm.setState(states);
+}
+
+export async function handleNewTodo(sm, newTodo) {
+  if (newTodo !== "") {
+    const todoItem = {
+      description: newTodo,
+      priority: "low",
+      label: "work",
+      completed: false,
+    };
+    const response = await fetch("http://localhost:3000/tasks", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(todoItem),
+    });
+    const data = await response.json();
+    if (data.success) {
+      sm.setState(data.tasks);
+    } else {
+      console.log("error");
+    }
+  }
 }
 
 export function checkHides(sm) {
@@ -105,13 +121,13 @@ export function changeToActive() {
     // Get all the li elements inside the ul
     const liElements = todoList.querySelectorAll("li");
 
-    liElements.forEach(li => {
+    liElements.forEach((li) => {
       // Check if the li element contains the class "completed"
       if (li.classList.contains("completed")) {
         // Replace "completed" with "completed hide"
-        MF.setAttributes(li, {class: "completed hide"})
-      }else {
-        MF.setAttributes(li, {class: ""})
+        MF.setAttributes(li, { class: "completed hide" });
+      } else {
+        MF.setAttributes(li, { class: "" });
       }
     });
   }
@@ -125,14 +141,13 @@ export function changeToCompleted() {
     // Get all the li elements inside the ul
     const liElements = todoList.querySelectorAll("li");
 
-    liElements.forEach(li => {
+    liElements.forEach((li) => {
       // Check if the li element contains the class "completed"
       if (!li.classList.contains("completed")) {
         // Replace "completed" with "completed hide"
-        MF.setAttributes(li, {class: "hide"})
-      }
-      else {
-        MF.setAttributes(li, {class: "completed"})
+        MF.setAttributes(li, { class: "hide" });
+      } else {
+        MF.setAttributes(li, { class: "completed" });
       }
     });
   }
@@ -146,14 +161,13 @@ export function changeToList() {
     // Get all the li elements inside the ul
     const liElements = todoList.querySelectorAll("li");
 
-    liElements.forEach(li => {
+    liElements.forEach((li) => {
       // Check if the li element contains the class "completed"
       if (li.classList.contains("completed")) {
         // Replace "completed" with "completed hide"
-        MF.setAttributes(li, {class: "completed"})
-      }
-      else {
-        MF.setAttributes(li, {class: ""})
+        MF.setAttributes(li, { class: "completed" });
+      } else {
+        MF.setAttributes(li, { class: "" });
       }
     });
   }
