@@ -115,10 +115,24 @@ Enjoy using the Mini-Framework for your web development projects.
 
 ## TodoMVC
 
-TodoMVC is a sample todo-list web page, which is used to compare different frameworks. You need npm to run this page on a local machine, and it can be done by moving to backend directory:
+TodoMVC is a sample todo-list web page, which is used to compare different frameworks.
+ 
+First clone the repo with
+```
+git clone https://github.com/pekaju/mini-framework
+```
+
+You need npm to run this page on a local machine, and it can be done by moving to backend directory:
 ```
 cd todoMVC/backend
 ```
-and running ```npm install``` to install the needed node libraries.
-To execute the script run ```node server.js```
+and running 
+```
+npm install
+``` 
+to install the needed node libraries.
+To execute the script run 
+```
+node server.js
+```
 
